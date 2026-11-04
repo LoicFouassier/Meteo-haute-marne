@@ -121,6 +121,20 @@ const d=new Date(date+"T12:00:00");
 html+='<div class="day"><span>'+jours[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)+'<br><span class="small">'+description(data.daily.weather_code[i])+'</span></span><strong>'+Math.round(data.daily.temperature_2m_min[i])+'° / '+Math.round(data.daily.temperature_2m_max[i])+'°</strong></div>';
 });
 document.getElementById("previsions").innerHTML=html;
+  let gel=[];
+data.daily.time.forEach((date,i)=>{
+ const d=new Date(date+"T12:00:00");
+ const minimum=Math.round(data.daily.temperature_2m_min[i]);
+ if(data.daily.temperature_2m_min[i]<0){
+  gel.push(jours[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1)+" : "+minimum+" °C");
+ }
+});
+const alerte=document.getElementById("alerteGel");
+if(gel.length){
+ alerte.innerHTML="⚠️ Risque de gel prévu à "+commune.nom+" :<br><br>"+gel.join("<br>");
+}else{
+ alerte.textContent="✅ Aucun risque de gel prévu dans les 7 prochains jours à "+commune.nom+".";
+}
 }catch(e){
 document.getElementById("description").textContent="Impossible de charger les données. Réessayez.";
 document.getElementById("previsions").textContent="Prévisions indisponibles.";
