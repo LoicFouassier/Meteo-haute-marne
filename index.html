@@ -1,4 +1,5 @@
-html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +12,8 @@ h1{font-size:25px;margin:5px}
 .subtitle{color:#b9cce5}
 main{max-width:650px;margin:auto}
 .card{background:#102c50;border-radius:18px;padding:20px;margin:15px 0}
-select,button{width:100%;padding:14px;border-radius:10px;border:0;font-size:16px}
-select{background:white;color:#102c50}
+input,button{width:100%;padding:14px;border-radius:10px;border:0;font-size:16px}
+input{background:white;color:#102c50}
 .temperature{font-size:58px;font-weight:bold;margin:15px 0}
 .details{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .detail{background:#193b63;padding:15px;border-radius:12px}
@@ -28,15 +29,11 @@ button{background:#f4d44d;color:#10213b;font-weight:bold;margin-top:12px}
 <div class="subtitle">Votre météo au cœur du département</div>
 </header>
 <section class="card">
-<h2>Choisir une commune</h2>
-<select id="commune">
-<option value="48.1119,5.1386">Chaumont</option>
-<option value="48.6378,4.9500">Saint-Dizier</option>
-<option value="47.8667,5.3333">Langres</option>
-<option value="48.2333,5.1333">Joinville</option>
-<option value="47.9500,5.3667">Bourbonne-les-Bains</option>
-</select>
+<h2>Rechercher une commune</h2>
+<input id="commune" list="communes" placeholder="Tape le nom d'une commune">
+<datalist id="communes"></datalist>
 <button onclick="chargerMeteo()">Afficher la météo</button>
+<div class="small" id="etat">Chargement des communes...</div>
 </section>
 <section class="card">
 <div id="ville">Chaumont</div>
@@ -56,13 +53,7 @@ button{background:#f4d44d;color:#10213b;font-weight:bold;margin-top:12px}
 <p class="small" style="text-align:center">Données météo : Open-Meteo</p>
 </main>
 <script>
-const noms = {
-"48.1119,5.1386":"Chaumont",
-"48.6378,4.9500":"Saint-Dizier",
-"47.8667,5.3333":"Langres",
-"48.2333,5.1333":"Joinville",
-"47.9500,5.3667":"Bourbonne-les-Bains"
-};
+let communes=[];
 function description(code){
 if(code===0)return "☀️ Ciel dégagé";
 if(code<=2)return "🌤️ Éclaircies";
@@ -75,16 +66,43 @@ if(code<=86)return "🌨️ Averses de neige";
 if(code>=95)return "⛈️ Orages";
 return "Conditions variables";
 }
+async function chargerCommunes(){
+try{
+const r=await fetch("https://geo.api.gouv.fr/communes?codeDepartement=52&fields=nom,code,centre&format=json&geometry=centre");
+if(!r.ok)throw new Error();
+communes=await r.json();
+communes=communes.filter(c=>c.centre&&c.centre.coordinates);
+communes.sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
+const liste=document.getElementById("communes");
+communes.forEach(c=>{
+const option=document.createElement("option");
+option.value=c.nom;
+liste.appendChild(option);
+});
+document.getElementById("etat").textContent=communes.length+" communes disponibles en Haute-Marne";
+document.getElementById("commune").value="Chaumont";
+chargerMeteo();
+}catch(e){
+document.getElementById("etat").textContent="Impossible de charger les communes. Réessayez.";
+}
+}
 async function chargerMeteo(){
-const valeur=document.getElementById("commune").value;
-const [lat,lon]=valeur.split(",");
-const ville=noms[valeur];
-document.getElementById("ville").textContent=ville;
+const nom=document.getElementById("commune").value.trim();
+const commune=communes.find(c=>c.nom.toLowerCase()===nom.toLowerCase());
+if(!commune){
+document.getElementById("etat").textContent="Choisis une commune dans la liste proposée.";
+return;
+}
+const coords=commune.centre.coordinates;
+const lon=coords[0];
+const lat=coords[1];
+document.getElementById("ville").textContent=commune.nom;
+document.getElementById("description").textContent="Chargement...";
 document.getElementById("previsions").textContent="Chargement...";
 try{
-const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=Europe%2FParis`;
+const url="https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=Europe%2FParis";
 const reponse=await fetch(url);
-if(!reponse.ok)throw new Error("Erreur météo");
+if(!reponse.ok)throw new Error();
 const data=await reponse.json();
 const c=data.current;
 document.getElementById("temperature").textContent=Math.round(c.temperature_2m)+"°C";
@@ -97,10 +115,7 @@ const jours=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
 let html="";
 data.daily.time.forEach((date,i)=>{
 const d=new Date(date+"T12:00:00");
-html+=`<div class="day">
-<span>${jours[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}<br><span class="small">${description(data.daily.weather_code[i])}</span></span>
-<strong>${Math.round(data.daily.temperature_2m_min[i])}° / ${Math.round(data.daily.temperature_2m_max[i])}°</strong>
-</div>`;
+html+='<div class="day"><span>'+jours[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)+'<br><span class="small">'+description(data.daily.weather_code[i])+'</span></span><strong>'+Math.round(data.daily.temperature_2m_min[i])+'° / '+Math.round(data.daily.temperature_2m_max[i])+'°</strong></div>';
 });
 document.getElementById("previsions").innerHTML=html;
 }catch(e){
@@ -108,8 +123,10 @@ document.getElementById("description").textContent="Impossible de charger les do
 document.getElementById("previsions").textContent="Prévisions indisponibles.";
 }
 }
-document.getElementById("commune").addEventListener("change",chargerMeteo);
-chargerMeteo();
+document.getElementById("commune").addEventListener("keydown",function(e){
+if(e.key==="Enter")chargerMeteo();
+});
+chargerCommunes();
 </script>
 </body>
 </html>
