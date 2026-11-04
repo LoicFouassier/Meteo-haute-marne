@@ -1,1 +1,116 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Météo Haute-Marne</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#071a35;color:white;padding:20px}
+header{text-align:center;padding:22px 10px}
+h1{font-size:25px;margin:5px}
+.subtitle{color:#b9cce5}
+main{max-width:650px;margin:auto}
+.card{background:#102c50;border-radius:18px;padding:20px;margin:15px 0}
+select,button{width:100%;padding:14px;border-radius:10px;border:0;font-size:16px}
+select{background:white;color:#102c50}
+.temperature{font-size:58px;font-weight:bold;margin:15px 0}
+.details{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail{background:#193b63;padding:15px;border-radius:12px}
+.day{display:flex;justify-content:space-between;padding:13px 4px;border-bottom:1px solid #34506e}
+.small{color:#b9cce5;font-size:13px}
+button{background:#f4d44d;color:#10213b;font-weight:bold;margin-top:12px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>🌤️ MÉTÉO HAUTE-MARNE</h1>
+<div class="subtitle">Votre météo au cœur du département</div>
+</header>
+<section class="card">
+<h2>Choisir une commune</h2>
+<select id="commune">
+<option value="48.1119,5.1386">Chaumont</option>
+<option value="48.6378,4.9500">Saint-Dizier</option>
+<option value="47.8667,5.3333">Langres</option>
+<option value="48.2333,5.1333">Joinville</option>
+<option value="47.9500,5.3667">Bourbonne-les-Bains</option>
+</select>
+<button onclick="chargerMeteo()">Afficher la météo</button>
+</section>
+<section class="card">
+<div id="ville">Chaumont</div>
+<div class="temperature" id="temperature">--°</div>
+<div id="description">Chargement des conditions...</div>
+<div class="details">
+<div class="detail">💧 Humidité<br><strong id="humidite">--</strong></div>
+<div class="detail">🌬️ Vent<br><strong id="vent">--</strong></div>
+<div class="detail">🌡️ Ressenti<br><strong id="ressenti">--</strong></div>
+<div class="detail">🌧️ Précipitations<br><strong id="pluie">--</strong></div>
+</div>
+</section>
+<section class="card">
+<h2>📅 Prévisions à 7 jours</h2>
+<div id="previsions">Chargement...</div>
+</section>
+<p class="small" style="text-align:center">Données météo : Open-Meteo</p>
+</main>
+<script>
+const noms = {
+"48.1119,5.1386":"Chaumont",
+"48.6378,4.9500":"Saint-Dizier",
+"47.8667,5.3333":"Langres",
+"48.2333,5.1333":"Joinville",
+"47.9500,5.3667":"Bourbonne-les-Bains"
+};
+function description(code){
+if(code===0)return "☀️ Ciel dégagé";
+if(code<=2)return "🌤️ Éclaircies";
+if(code===3)return "☁️ Ciel couvert";
+if(code<=48)return "🌫️ Brouillard";
+if(code<=67)return "🌧️ Pluie";
+if(code<=77)return "❄️ Neige";
+if(code<=82)return "🌦️ Averses";
+if(code<=86)return "🌨️ Averses de neige";
+if(code>=95)return "⛈️ Orages";
+return "Conditions variables";
+}
+async function chargerMeteo(){
+const valeur=document.getElementById("commune").value;
+const [lat,lon]=valeur.split(",");
+const ville=noms[valeur];
+document.getElementById("ville").textContent=ville;
+document.getElementById("previsions").textContent="Chargement...";
+try{
+const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=Europe%2FParis`;
+const reponse=await fetch(url);
+if(!reponse.ok)throw new Error("Erreur météo");
+const data=await reponse.json();
+const c=data.current;
+document.getElementById("temperature").textContent=Math.round(c.temperature_2m)+"°C";
+document.getElementById("description").textContent=description(c.weather_code);
+document.getElementById("humidite").textContent=c.relative_humidity_2m+" %";
+document.getElementById("vent").textContent=Math.round(c.wind_speed_10m)+" km/h";
+document.getElementById("ressenti").textContent=Math.round(c.apparent_temperature)+" °C";
+document.getElementById("pluie").textContent=c.precipitation+" mm";
+const jours=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+let html="";
+data.daily.time.forEach((date,i)=>{
+const d=new Date(date+"T12:00:00");
+html+=`<div class="day">
+<span>${jours[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}<br><span class="small">${description(data.daily.weather_code[i])}</span></span>
+<strong>${Math.round(data.daily.temperature_2m_min[i])}° / ${Math.round(data.daily.temperature_2m_max[i])}°</strong>
+</div>`;
+});
+document.getElementById("previsions").innerHTML=html;
+}catch(e){
+document.getElementById("description").textContent="Impossible de charger les données. Réessayez.";
+document.getElementById("previsions").textContent="Prévisions indisponibles.";
+}
+}
+document.getElementById("commune").addEventListener("change",chargerMeteo);
+chargerMeteo();
+</script>
+</body>
+</html>
