@@ -125,6 +125,20 @@ const d=new Date(date+"T12:00:00");
 html+='<div class="day"><span>'+jours[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)+'<br><span class="small">'+description(data.daily.weather_code[i])+'</span></span><strong>'+Math.round(data.daily.temperature_2m_min[i])+'° / '+Math.round(data.daily.temperature_2m_max[i])+'°</strong></div>';
 });
 document.getElementById("previsions").innerHTML=html;
+  let fortesPluies=[];
+data.daily.time.forEach((date,i)=>{
+ const pluie=data.daily.precipitation_sum[i];
+ if(pluie>=20){
+  const d=new Date(date+"T12:00:00");
+  fortesPluies.push(jours[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1)+" : "+pluie+" mm");
+ }
+});
+const alertePluie=document.getElementById("alertePluie");
+if(fortesPluies.length){
+ alertePluie.innerHTML="⚠️ Risque de fortes pluies à "+commune.nom+" :<br><br>"+fortesPluies.join("<br>");
+}else{
+ alertePluie.textContent="✅ Pas de fortes pluies prévues dans les 7 prochains jours à "+commune.nom+".";
+}
   let gel=[];
 data.daily.time.forEach((date,i)=>{
  const d=new Date(date+"T12:00:00");
