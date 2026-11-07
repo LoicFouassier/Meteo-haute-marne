@@ -99,6 +99,7 @@ attribution:"&copy; OpenStreetMap"
 communes.forEach(c=>{
 const coords=c.centre.coordinates;
 const marker=L.circleMarker([coords[1],coords[0]],{radius:6,color:"#ffffff",fillColor:"#3388ff",fillOpacity:0.9}).addTo(carteMeteo);
+marqueurs.push({marker:marker,commune:c});
 marker.bindPopup(c.nom);
 marker.on("click",async function(){
 marker.setPopupContent(c.nom+" : chargement...");
