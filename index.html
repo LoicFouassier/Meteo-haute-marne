@@ -123,7 +123,8 @@ const couleur=temp<0?"#3388ff":temp<10?"#00a86b":temp<20?"#f5a623":temp<28?"#ff7
 marker.setStyle({fillColor:couleur});
 const vent=data.current.wind_speed_10m;
 const pluie=data.current.precipitation;
-marker.setPopupContent(c.nom+" : "+temp.toFixed(1)+" °C<br>💨 Vent : "+vent+" km/h<br>🌧️ Précipitations : "+pluie+" mm");
+const heures=data.hourly.time.map((h,i)=>new Date(h).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})+" : "+data.hourly.temperature_2m[i].toFixed(1)+" °C").join("<br>");
+marker.setPopupContent(c.nom+" : "+temp.toFixed(1)+" °C<br>💨 Vent : "+vent+" km/h<br>🌧️ Précipitations : "+pluie+" mm<br><strong>Prévisions sur 24 h</strong><br>"+heures);
 }catch(e){
 marker.setPopupContent(c.nom+" : température indisponible");
 }
