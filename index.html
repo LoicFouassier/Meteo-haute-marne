@@ -121,7 +121,9 @@ const data=await r.json();
 const temp=data.current.temperature_2m;
 const couleur=temp<0?"#3388ff":temp<10?"#00a86b":temp<20?"#f5a623":temp<28?"#ff7800":"#e53935";
 marker.setStyle({fillColor:couleur});
-marker.setPopupContent(c.nom+" : "+temp.toFixed(1)+" °C");
+const vent=data.current.wind_speed_10m;
+const pluie=data.current.precipitation;
+marker.setPopupContent(c.nom+" : "+temp.toFixed(1)+" °C<br>💨 Vent : "+vent+" km/h<br>🌧️ Précipitations : "+pluie+" mm");
 }catch(e){
 marker.setPopupContent(c.nom+" : température indisponible");
 }
