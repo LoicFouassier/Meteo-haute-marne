@@ -91,6 +91,16 @@ const r=await fetch("https://geo.api.gouv.fr/communes?codeDepartement=52&fields=
 if(!r.ok)throw new Error();
 communes=await r.json();
 communes=communes.filter(c=>c.centre&&c.centre.coordinates);
+if(!carteMeteo){
+carteMeteo=L.map("carte").setView([48.1,5.3],9);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+attribution:"&copy; OpenStreetMap"
+}).addTo(carteMeteo);
+communes.forEach(c=>{
+const coords=c.centre.coordinates;
+L.circleMarker([coords[1],coords[0]],{radius:5}).addTo(carteMeteo).bindPopup(c.nom);
+});
+}
 communes.sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
 const liste=document.getElementById("communes");
 communes.forEach(c=>{
