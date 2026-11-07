@@ -96,6 +96,17 @@ carteMeteo=L.map("carte").setView([48.1,5.3],9);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
 attribution:"&copy; OpenStreetMap"
 }).addTo(carteMeteo);
+const legende=L.control({position:"bottomright"});
+legende.onAdd=function(){
+const div=L.DomUtil.create("div");
+div.style.background="white";
+div.style.padding="8px";
+div.style.borderRadius="8px";
+div.style.color="#222";
+div.innerHTML="<strong>Températures</strong><br>🔵 Sous 0°C<br>🟢 0 à 9°C<br>🟡 10 à 19°C<br>🟠 20 à 27°C<br>🔴 28°C et plus";
+return div;
+};
+legende.addTo(carteMeteo);
 communes.forEach(c=>{
 const coords=c.centre.coordinates;
 const marker=L.circleMarker([coords[1],coords[0]],{radius:6,color:"#ffffff",fillColor:"#3388ff",fillOpacity:0.9}).addTo(carteMeteo);
