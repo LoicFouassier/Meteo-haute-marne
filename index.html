@@ -157,6 +157,20 @@ if(gel.length){
 }else{
  alerte.textContent="✅ Aucun risque de gel prévu dans les 7 prochains jours à "+commune.nom+".";
 }
+let vents=[];
+data.daily.time.forEach((date,i)=>{
+ const rafale=data.daily.wind_gusts_10m_max[i];
+ if(rafale>=60){
+  const d=new Date(date+"T12:00:00");
+  vents.push(jours[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1)+" : "+Math.round(rafale)+" km/h");
+ }
+});
+const alerteVent=document.getElementById("alerteVent");
+if(vents.length){
+ alerteVent.innerHTML="⚠️ Risque de vent fort à "+commune.nom+" :<br><br>"+vents.join("<br>");
+}else{
+ alerteVent.textContent="✅ Pas de rafales de 60 km/h ou plus prévues dans les 7 prochains jours à "+commune.nom+".";
+}
 }catch(e){
 document.getElementById("description").textContent="Impossible de charger les données. Réessayez.";
 document.getElementById("previsions").textContent="Prévisions indisponibles.";
