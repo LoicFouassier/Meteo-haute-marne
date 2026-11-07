@@ -98,7 +98,22 @@ attribution:"&copy; OpenStreetMap"
 }).addTo(carteMeteo);
 communes.forEach(c=>{
 const coords=c.centre.coordinates;
-L.circleMarker([coords[1],coords[0]],{radius:5}).addTo(carteMeteo).bindPopup(c.nom);
+const marker=L.circleMarker([coords[1],coords[0]],{radius:6,color:"#ffffff",fillColor:"#3388ff",fillOpacity:0.9}).addTo(carteMeteo);
+marker.bindPopup(c.nom);
+marker.on("click",async function(){
+marker.setPopupContent(c.nom+" : chargement...");
+try{
+const url="https://api.open-meteo.com/v1/forecast?latitude="+coords[1]+"&longitude="+coords[0]+"&current=temperature_2m&timezone=Europe%2FParis";
+const r=await fetch(url);
+const data=await r.json();
+const temp=data.current.temperature_2m;
+const couleur=temp<0?"#3388ff":temp<10?"#00a86b":temp<20?"#f5a623":temp<28?"#ff7800":"#e53935";
+marker.setStyle({fillColor:couleur});
+marker.setPopupContent(c.nom+" : "+temp.toFixed(1)+" °C");
+}catch(e){
+marker.setPopupContent(c.nom+" : température indisponible");
+}
+});
 });
 }
 communes.sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
