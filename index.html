@@ -71,6 +71,8 @@ button{background:#f4d44d;color:#10213b;font-weight:bold;margin-top:12px}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 let communes=[];
+let carteMeteo;
+let marqueurs=[];
 function description(code){
 if(code===0)return "☀️ Ciel dégagé";
 if(code<=2)return "🌤️ Éclaircies";
