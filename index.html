@@ -116,6 +116,25 @@ marker.setPopupContent(c.nom+" : température indisponible");
 }
 });
 });
+for(let i=0;i<marqueurs.length;i+=50){
+const groupe=marqueurs.slice(i,i+50);
+const latitudes=groupe.map(x=>x.commune.centre.coordinates[1]).join(",");
+const longitudes=groupe.map(x=>x.commune.centre.coordinates[0]).join(",");
+const url="https://api.open-meteo.com/v1/forecast?latitude="+latitudes+"&longitude="+longitudes+"&current=temperature_2m&timezone=Europe%2FParis";
+try{
+const r=await fetch(url);
+const donnees=await r.json();
+groupe.forEach((item,j)=>{
+const data=Array.isArray(donnees)?donnees[j]:donnees;
+const temp=data.current.temperature_2m;
+const couleur=temp<0?"#3388ff":temp<10?"#00a86b":temp<20?"#f5a623":temp<28?"#ff7800":"#e53935";
+item.marker.setStyle({fillColor:couleur});
+item.marker.bindTooltip(temp.toFixed(1)+" °C",{permanent:true});
+});
+}catch(e){
+console.log("Températures indisponibles");
+}
+}
 }
 communes.sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
 const liste=document.getElementById("communes");
