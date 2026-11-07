@@ -111,7 +111,7 @@ document.getElementById("ville").textContent=commune.nom;
 document.getElementById("description").textContent="Chargement...";
 document.getElementById("previsions").textContent="Chargement...";
 try{
-const url="https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=Europe%2FParis";
+const url="https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_gusts_10m_max&forecast_days=7&timezone=Europe%2FParis";
 const reponse=await fetch(url);
 if(!reponse.ok)throw new Error();
 const data=await reponse.json();
