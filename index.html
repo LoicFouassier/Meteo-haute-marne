@@ -296,7 +296,7 @@ if(vents.length){
  alerteVent.textContent="✅ Pas de rafales de 60 km/h ou plus prévues dans les 7 prochains jours à "+commune.nom+".";
 }
 }catch(e){
-document.getElementById("description").textContent="Impossible de charger les données. Réessayez.";
+document.getElementById("description").textContent="Erreur météo : "+e.message;
 document.getElementById("previsions").textContent="Prévisions indisponibles.";
 }
 }
