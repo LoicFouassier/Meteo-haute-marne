@@ -237,6 +237,34 @@ async function fetchAvecRetry(url){
  }
 }
 
+const cacheMeteo = new Map();
+
+async function fetchAvecCache(url){
+ const maintenant=Date.now();
+ const entree=cacheMeteo.get(url);
+
+ if(entree && maintenant-entree.date<10*60*1000){
+  return {
+   ok:true,
+   json:async()=>entree.donnees
+  };
+ }
+
+ const reponse=await fetchAvecRetry(url);
+ const donnees=await reponse.json();
+
+ cacheMeteo.set(url,{
+  date:maintenant,
+  donnees:donnees
+ });
+
+ return {
+  ok:true,
+  json:async()=>donnees
+ };
+}
+
+
 async function chargerMeteo(){
 const nom=document.getElementById("commune").value.trim();
 const commune=communes.find(c=>c.nom.toLowerCase()===nom.toLowerCase());
