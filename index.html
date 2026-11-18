@@ -120,7 +120,7 @@ const r=await fetch(url);
 const data=await r.json();
 const temp=data.current.temperature_2m;
 const pluie24h=data.daily.precipitation_sum[0];
-const mini7j=Math.min(...data.daily.temperature_2m_min);
+daily=precipitation_sum,temperature_2m_min,wind_gusts_10m_max
 const couleur=mini7j>=0?"#a8d8f0":mini7j>-1?"#5dade2":mini7j>-3?"#2874a6":"#8e44ad";
 marker.setStyle({fillColor:couleur});
 const vent=data.current.wind_speed_10m;
