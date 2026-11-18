@@ -360,7 +360,8 @@ favoris.push(commune.nom);
 localStorage.setItem("favorisMeteoHauteMarne",JSON.stringify(favoris));
 afficherFavoris();
 document.getElementById("etat").textContent=commune.nom+" ajouté aux favoris.";
-}
+
+
 async function chargerMeteo(){
 const nom=document.getElementById("commune").value.trim();
 const commune=communes.find(c=>c.nom.toLowerCase()===nom.toLowerCase());
