@@ -146,7 +146,7 @@ const latitudes=groupe.map(x=>x.commune.centre.coordinates[1]).join(",");
 const longitudes=groupe.map(x=>x.commune.centre.coordinates[0]).join(",");
 const url="https://api.open-meteo.com/v1/forecast?latitude="+latitudes+"&longitude="+longitudes+"&daily=temperature_2m_min,wind_gusts_10m_max&forecast_days=7&timezone=Europe%2FParis";
 try{
-const r=await fetchAvecRetry(url);
+const r=await fetchAvecCache(url);
 const donnees=await r.json();
 groupe.forEach((item,j)=>{
 const data=Array.isArray(donnees)?donnees[j]:donnees;
