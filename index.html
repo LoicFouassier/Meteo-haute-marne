@@ -164,7 +164,7 @@ console.log("Températures indisponibles");
 }
 }
 }
-if(false){
+if(typeof L !== "undefined" && !cartePluie){
 cartePluie=L.map("cartePluie").setView([48.1,5.3],9);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
 attribution:"&copy; OpenStreetMap"
