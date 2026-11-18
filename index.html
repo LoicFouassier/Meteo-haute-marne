@@ -164,6 +164,7 @@ console.log("Températures indisponibles");
 }
 await new Promise(resolve=>setTimeout(resolve,2000));
 }
+})();
 }
 if(typeof L !== "undefined" && !cartePluie){
 cartePluie=L.map("cartePluie").setView([48.1,5.3],9);
