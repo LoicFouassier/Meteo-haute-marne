@@ -144,7 +144,7 @@ const data=Array.isArray(donnees)?donnees[j]:donnees;
 const rafale7j=Math.max(...data.daily.wind_gusts_10m_max);
 const couleur=rafale7j<40?"#00a86b":rafale7j<60?"#f5a623":rafale7j<80?"#ff7800":"#e53935";
 item.marker.setStyle({fillColor:couleur});
-item.marker.bindTooltip(mini7j.toFixed(1)+" °C – Mini sur 7 jours",{permanent:true});
+item.marker.bindTooltip(rafale7j.toFixed(1)+" km/h – Rafale max sur 7 jours",{permanent:true});
 
 
 
