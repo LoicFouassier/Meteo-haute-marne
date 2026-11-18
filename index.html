@@ -134,7 +134,7 @@ for(let i=0;i<marqueurs.length;i+=50){
 const groupe=marqueurs.slice(i,i+50);
 const latitudes=groupe.map(x=>x.commune.centre.coordinates[1]).join(",");
 const longitudes=groupe.map(x=>x.commune.centre.coordinates[0]).join(",");
-const url="https://api.open-meteo.com/v1/forecast?latitude="+latitudes+"&longitude="+longitudes+"&current=temperature_2m&timezone=Europe%2FParis";
+const url="https://api.open-meteo.com/v1/forecast?latitude="+latitudes+"&longitude="+longitudes+"&current=temperature_2m,precipitation&timezone=Europe%2FParis";
 try{
 const r=await fetch(url);
 const donnees=await r.json();
