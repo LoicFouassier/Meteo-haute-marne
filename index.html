@@ -145,7 +145,7 @@ const temp=data.current.temperature_2m;
 const pluie24h=data.daily.precipitation_sum[0];
 const couleur=pluie24h<1?"#a8d8f0":pluie24h<5?"#5dade2":pluie24h<10?"#2874a6":pluie24h<20?"#154360":"#8e44ad";
 item.marker.setStyle({fillColor:couleur});
-item.marker.bindTooltip(temp.toFixed(1)+" °C – 🌧️ "+data.current.precipitation+" mm",{permanent:true});
+item.marker.bindTooltip(temp.toFixed(1)+" °C – 🌧️ "+pluie24h.toFixed(1)+" mm / 24 h",{permanent:true});
 });
 }catch(e){
 console.log("Températures indisponibles");
