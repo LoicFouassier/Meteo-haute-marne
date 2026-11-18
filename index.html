@@ -277,7 +277,68 @@ return [];
 }
 }
 
+function afficherFavoris(){
+const zone=document.getElementById("listeFavoris");
+zone.innerHTML="";
+const favoris=lireFavoris();
 
+if(favoris.length===0){
+zone.textContent="Aucun favori pour le moment.";
+return;
+}
+
+favoris.forEach(nom=>{
+const ligne=document.createElement("div");
+ligne.style.display="flex";
+ligne.style.gap="8px";
+ligne.style.margin="5px 0";
+
+const bouton=document.createElement("button");
+bouton.type="button";
+bouton.textContent="⭐ "+nom;
+bouton.style.flex="1";
+bouton.onclick=()=>{
+document.getElementById("commune").value=nom;
+chargerMeteo();
+};
+
+const supprimer=document.createElement("button");
+supprimer.type="button";
+supprimer.textContent="❌";
+supprimer.style.width="55px";
+supprimer.onclick=()=>{
+const nouveaux=lireFavoris().filter(n=>n.toLowerCase()!==nom.toLowerCase());
+localStorage.setItem("favorisMeteoHauteMarne",JSON.stringify(nouveaux));
+afficherFavoris();
+};
+
+ligne.appendChild(bouton);
+ligne.appendChild(supprimer);
+zone.appendChild(ligne);
+});
+}
+
+function ajouterFavori(){
+const nom=document.getElementById("commune").value.trim();
+const commune=communes.find(c=>c.nom.toLowerCase()===nom.toLowerCase());
+
+if(!commune){
+document.getElementById("etat").textContent="Choisis une commune valide.";
+return;
+}
+
+const favoris=lireFavoris();
+
+if(favoris.some(n=>n.toLowerCase()===commune.nom.toLowerCase())){
+document.getElementById("etat").textContent=commune.nom+" est déjà dans tes favoris.";
+return;
+}
+
+favoris.push(commune.nom);
+localStorage.setItem("favorisMeteoHauteMarne",JSON.stringify(favoris));
+afficherFavoris();
+document.getElementById("etat").textContent=commune.nom+" ajouté aux favoris.";
+}
 
 async function chargerMeteo(){
 const nom=document.getElementById("commune").value.trim();
