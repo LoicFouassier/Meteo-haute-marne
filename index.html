@@ -119,7 +119,8 @@ const url="https://api.open-meteo.com/v1/forecast?latitude="+coords[1]+"&longitu
 const r=await fetch(url);
 const data=await r.json();
 const temp=data.current.temperature_2m;
-const couleur=temp<0?"#3388ff":temp<10?"#00a86b":temp<20?"#f5a623":temp<28?"#ff7800":"#e53935";
+const pluie24h=data.daily.precipitation_sum[0];
+const couleur=pluie24h<1?"#a8d8f0":pluie24h<5?"#5dade2":pluie24h<10?"#2874a6":pluie24h<20?"#154360":"#8e44ad";
 marker.setStyle({fillColor:couleur});
 const vent=data.current.wind_speed_10m;
 const pluie=data.current.precipitation;
