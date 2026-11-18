@@ -204,6 +204,7 @@ item.marker.bindTooltip(pluie7j.toFixed(1)+" mm – Pluie sur 7 jours",{permanen
 });
 }catch(e){
 console.log("Précipitations indisponibles");
+await new Promise(resolve=>setTimeout(resolve,2000));
 }
 }
 }
