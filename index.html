@@ -294,6 +294,7 @@ bouton.textContent="⭐ "+nom;
 bouton.style.margin="5px";
 bouton.onclick=()=>{
 document.getElementById("commune").value=nom;
+afficherFavoris();
 chargerMeteo();
 };
 zone.appendChild(bouton);
