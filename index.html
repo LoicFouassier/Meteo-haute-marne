@@ -187,7 +187,7 @@ radius:6,color:"#ffffff",fillColor:"#3388ff",fillOpacity:0.9
 }).addTo(cartePluie);
 marqueursPluie.push({marker:marker,commune:c});
 });
-for(let i=0;i<marqueursPluie.length;i+=50){
+if(false)for(let i=0;i<marqueursPluie.length;i+=50){
 const groupe=marqueursPluie.slice(i,i+50);
 const latitudes=groupe.map(x=>x.commune.centre.coordinates[1]).join(",");
 const longitudes=groupe.map(x=>x.commune.centre.coordinates[0]).join(",");
