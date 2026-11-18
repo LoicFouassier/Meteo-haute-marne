@@ -140,7 +140,7 @@ marker.setPopupContent(c.nom+" : température indisponible");
 }
 });
 });
-for(let i=0;i<marqueurs.length;i+=50){
+if(false)for(let i=0;i<marqueurs.length;i+=50){
 const groupe=marqueurs.slice(i,i+50);
 const latitudes=groupe.map(x=>x.commune.centre.coordinates[1]).join(",");
 const longitudes=groupe.map(x=>x.commune.centre.coordinates[0]).join(",");
