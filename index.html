@@ -124,7 +124,7 @@ marker.on("click",async function(){
 marker.setPopupContent(c.nom+" : chargement...");
 try{
 const url="https://api.open-meteo.com/v1/forecast?latitude="+coords[1]+"&longitude="+coords[0]+"&current=temperature_2m,wind_speed_10m,precipitation&hourly=temperature_2m,precipitation,wind_speed_10m&daily=precipitation_sum,temperature_2m_min,wind_gusts_10m_max&forecast_days=7&forecast_hours=24&timezone=Europe%2FParis";
-const r=await fetch(url);
+const r=await fetchAvecCache(url);
 const data=await r.json();
 const temp=data.current.temperature_2m;
 const pluie24h=data.daily.precipitation_sum[0];
