@@ -226,6 +226,7 @@ liste.appendChild(option);
 });
 document.getElementById("etat").textContent=communes.length+" communes disponibles en Haute-Marne";
 document.getElementById("commune").value="Chaumont";
+afficherFavoris();
 chargerMeteo();
 }catch(e){
 document.getElementById("etat").textContent="Impossible de charger les communes. Réessayez.";
