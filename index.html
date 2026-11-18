@@ -226,6 +226,17 @@ chargerMeteo();
 document.getElementById("etat").textContent="Impossible de charger les communes. Réessayez.";
 }
 }
+
+async function fetchAvecRetry(url){
+ for(let tentative=1;tentative<=3;tentative++){
+  const reponse=await fetch(url);
+  if(reponse.ok)return reponse;
+  if(reponse.status!==429 && reponse.status<500)throw new Error("HTTP "+reponse.status);
+  if(tentative===3)throw new Error("HTTP "+reponse.status);
+  await new Promise(resolve=>setTimeout(resolve,tentative*3000));
+ }
+}
+
 async function chargerMeteo(){
 const nom=document.getElementById("commune").value.trim();
 const commune=communes.find(c=>c.nom.toLowerCase()===nom.toLowerCase());
